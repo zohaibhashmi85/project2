@@ -39,8 +39,42 @@ for i in results:
     
     data_list.append(a)
 
+titles = engine.execute("select * from vw_country_title_cnt")
+
+title_list = []
+
+for i in titles:
+    b = {"Country":i[0], "Titles":i[1]}
+
+    title_list.append(b)
+
+director = engine.execute("select * from vw_director_title_cnt limit 20")
+
+director_list = []
+
+for i in director:
+    c = {"Director":i[0], "Titles":i[1]}
+
+    director_list.append(c)
+
+type = engine.execute("SELECT type,COUNT(*) AS Title FROM netflix GROUP BY type")
+
+type_list = []
+
+for i in type:
+    d = {"Type":i[0], "Titles":i[1]}
+
+    type_list.append(d)
 
 
+release = engine.execute("SELECT release_year, COUNT(*) AS Title FROM netflix GROUP BY release_year Order by release_year ASC")
+
+release_list = []
+
+for i in release:
+    e = {"release_year":i[0], "Titles":i[1]}
+
+    release_list.append(e)
 #################################################
 # Flask Setup
 #################################################
@@ -56,12 +90,43 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+@app.route("/map")
+def map():
+    return render_template("map.html")
+
+@app.route("/country")
+def country():
+    return render_template("country.html")
+
+@app.route("/directors")
+def directors():
+    return render_template("directors.html")
+
 @app.route("/test", methods=["GET"])
 def welcome():
     """List all available api routes."""
     
     return (jsonify(data_list))
 
+@app.route("/titles", methods=["GET"])
+def New_Route():
+    
+    return (jsonify(title_list))
+
+@app.route("/director", methods=["GET"])
+def Second_Route():
+    
+    return (jsonify(director_list))
+
+@app.route("/type", methods=["GET"])
+def third_Route():
+
+    return (jsonify(type_list))
+
+@app.route("/release", methods=["GET"])
+def fourth_Route():
+
+    return (jsonify(release_list))
 
 if __name__ == '__main__':
     app.run(debug=True)
